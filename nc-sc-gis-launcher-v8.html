@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>NC/SC GIS Quick Launcher</title>
+<style>
+  :root {
+    --bg: #0b0f14;
+    --card: #121821;
+    --muted: #90a4b4;
+    --text: #e8eef5;
+    --accent: #6eb2ff;
+    --border: #223040;
+  }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+    padding: 24px;
+  }
+  h1 { margin: 0 0 6px; font-size: 20px; font-weight: 700; }
+  p.sub { margin: 0 0 18px; color: var(--muted); font-size: 13px; }
+  .bar {
+    display: grid; grid-template-columns: 1fr auto auto auto; gap: 10px; align-items: center;
+    background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 12px; margin-bottom: 18px;
+  }
+  input[type="text"] {
+    width: 100%; background: #0e141c; border: 1px solid var(--border); color: var(--text);
+    border-radius: 10px; padding: 10px 12px; font-size: 14px; outline: none;
+  }
+  select, button {
+    background: #0e141c; color: var(--text); border: 1px solid var(--border);
+    border-radius: 10px; padding: 10px 12px; font-size: 14px; cursor: pointer;
+  }
+  button.primary { background: var(--accent); color: #05101c; border: none; font-weight: 700; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 14px; }
+  .card h3 { margin: 0 0 8px; font-size: 15px; }
+  .links { display: grid; gap: 8px; }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .foot { margin-top: 18px; color: var(--muted); font-size: 12px; }
+</style>
+</head>
+<body>
+  <h1>NC/SC GIS Quick Launcher</h1>
+  <p class="sub">Enter an address/parcel and open common GIS or lookup portals. County entries go straight to their property search pages for best reliability.</p>
+
+  <div class="bar">
+    <input id="addr" type="text" placeholder="e.g., 2215 E 8th St, Charlotte, NC 28204" />
+    <select id="site">
+      <option value="google">Google Maps</option>
+      <option value="bing">Bing Maps</option>
+      <option value="zillow">Zillow</option>
+      <option value="realtor">Realtor.com</option>
+      <option value="meck">Meck Polaris 3G</option>
+      <option value="cabarrus">Cabarrus MapCabarrus</option>
+      <option value="gaston">Gaston Property Search</option>
+      <option value="union">Union NC GIS</option>
+      <option value="iredell">Iredell MapGeo</option>
+      <option value="york">York SC GIS</option>
+      <option value="lancaster">Lancaster SC GIS</option>
+    </select>
+    <button class="primary" onclick="launch()">Open</button>
+    <button onclick="copyAddr()">Copy</button>
+  </div>
+
+  <div class="grid">
+    <div class="card"><h3>Mecklenburg County</h3><div class="links"><a target="_blank" href="https://polaris3g.mecklenburgcountync.gov/">Polaris 3G</a></div></div>
+    <div class="card"><h3>Cabarrus County</h3><div class="links"><a target="_blank" href="https://location.cabarruscounty.us/mapcabarrus/">MapCabarrus</a></div></div>
+    <div class="card"><h3>Gaston County</h3><div class="links"><a target="_blank" href="https://gis.gastoncountync.gov/Map/Index">Map Lookup</a><a target="_blank" href="https://gis.gastoncountync.gov/Search/Index">Data Lookup</a><a target="_blank" href="https://gis.gastoncountync.gov/Mobile/Index">Mobile Site</a></div></div>
+    <div class="card"><h3>Union County (NC)</h3><div class="links"><a target="_blank" href="https://property.spatialest.com/nc/union#/">Property Search Viewer</a></div></div>
+    <div class="card"><h3>Iredell County</h3><div class="links"><a target="_blank" href="https://iredellcountync.mapgeo.io/datasets/properties?abuttersDistance=100&latlng=35.938916%2C-80.994521&zoom=11">MapGeo Properties</a></div></div>
+    <div class="card"><h3>York County (SC)</h3><div class="links"><a target="_blank" href="https://experience.arcgis.com/experience/e827d330f20a4508aa6777bf2c0b94e3/page/Address-Search">Address Search App</a></div></div>
+    <div class="card"><h3>Lancaster County (SC)</h3><div class="links"><a target="_blank" href="https://qpublic.schneidercorp.com/Application.aspx?AppID=211&LayerID=2815&PageTypeID=2&PageID=1551">QPublic Property Search</a></div></div>
+    <div class="card"><h3>General Lookups</h3><div class="links"><a target="_blank" href="https://www.google.com/maps">Google Maps</a><a target="_blank" href="https://www.bing.com/maps">Bing Maps</a><a target="_blank" href="https://www.zillow.com/">Zillow</a><a target="_blank" href="https://www.realtor.com/">Realtor.com</a></div></div>
+  </div>
+
+  <p class="foot">Tip: Use the address bar + dropdown to open maps or portals. Copy button lets you paste quickly into county search fields.</p>
+
+<script>
+function q(s) { return encodeURIComponent((s || '').trim()); }
+function copyAddr() {
+  const addr = document.getElementById('addr').value;
+  navigator.clipboard.writeText(addr).catch(() => {
+    const textarea = document.createElement('textarea');
+    textarea.value = addr;
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand('copy');
+    document.body.removeChild(textarea);
+  });
+}
+function launch() {
+  const a = document.getElementById('addr').value || '';
+  const site = document.getElementById('site').value;
+  let url = '';
+  switch (site) {
+    case 'google': url = 'https://www.google.com/maps/search/' + q(a); break;
+    case 'bing': url = 'https://www.bing.com/maps?q=' + q(a); break;
+    case 'zillow': url = 'https://www.zillow.com/'; break;
+    case 'realtor': url = 'https://www.realtor.com/'; break;
+    case 'meck': url = 'https://polaris3g.mecklenburgcountync.gov/'; break;
+    case 'cabarrus': url = 'https://location.cabarruscounty.us/mapcabarrus/'; break;
+    case 'gaston': url = 'https://gis.gastoncountync.gov/Search/Index'; break;
+    case 'union': url = 'https://property.spatialest.com/nc/union#/'; break;
+    case 'iredell': url = 'https://iredellcountync.mapgeo.io/datasets/properties?abuttersDistance=100&latlng=35.938916%2C-80.994521&zoom=11'; break;
+    case 'york': url = 'https://experience.arcgis.com/experience/e827d330f20a4508aa6777bf2c0b94e3/page/Address-Search'; break;
+    case 'lancaster': url = 'https://qpublic.schneidercorp.com/Application.aspx?AppID=211&LayerID=2815&PageTypeID=2&PageID=1551'; break;
+    default: url = 'https://www.google.com/maps/search/' + q(a);
+  }
+  window.open(url, '_blank', 'noopener');
+}
+</script>
+</body>
+</html>
